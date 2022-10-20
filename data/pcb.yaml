@@ -1,0 +1,15 @@
+# COCO 2017 dataset http://cocodataset.org
+
+# download command/URL (optional)
+download: bash ./scripts/get_coco.sh
+
+# train and val data as 1) directory: path/images/, 2) file: path/images.txt, or 3) list: [path1/images/, path2/images/]
+train: E:\\MyDataSet\\PCB\\train\\images  # 118287 images
+val: E:\\MyDataSet\\PCB\\validation\\images # 5000 images
+test: E:\\MyDataSet\\PCB\test\\images  # 20288 of 40670 images, submit to https://competitions.codalab.org/competitions/20794
+
+# number of classes
+nc: 9
+
+# class names
+names: ['Cap1', 'Cap2', 'Cap3', 'Cap4', 'MOSFET', 'Mov', 'Resestor', 'Resistor', 'Transformer']
