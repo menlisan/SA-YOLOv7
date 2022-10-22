@@ -379,50 +379,50 @@ def bbox_iou(box1, box2, x1y1x2y2=True, GIoU=False, DIoU=False, CIoU=False, SEIo
             alpha_iou = torch.pow(iou, alpha)
             alpha_iou_loss = 1 - alpha_iou
             return alpha_iou_loss
-        # elif SEIoU:  # SIoU Loss
-        #     #-----角度损失-------
-        #     s_cw = (b2_x1 + b2_x2 - b1_x1 - b1_x2) * 0.5
-        #     s_ch = (b2_y1 + b2_y2 - b1_y1 - b1_y2) * 0.5
-        #     sigma = torch.pow(s_cw ** 2 + s_ch ** 2, 0.5)
-        #     sin_alpha_1 = torch.abs(s_cw) / sigma
-        #     sin_alpha_2 = torch.abs(s_ch) / sigma
-        #     threshold = pow(2, 0.5) / 2 #夹角阈值 0.7071068 = sin45
-        #     sin_alpha = torch.where(sin_alpha_1 > threshold, sin_alpha_2, sin_alpha_1)
-        #     direct_cost = torch.cos(torch.arcsin(sin_alpha) * 2 - math.pi / 2)
-        #     #------距离损失-------
-        #     # rho_x = (s_cw / cw) ** 2
-        #     # rho_y = (s_ch / ch) ** 2
-        #     # # gamma = angle_cost
-        #     # gamma = angle_cost - 2
-        #     # distance_cost = 2 - torch.exp(gamma * rho_x) - torch.exp(gamma * rho_y)
-        #     # #-----形状损失--------
-        #     # omiga_w = torch.abs(w1 - w2) / torch.max(w1, w2)
-        #     # omiga_h = torch.abs(h1 - h2) / torch.max(h1, h2)
-        #     # shape_cost = torch.pow(1 - torch.exp(-1 * omiga_w), 4) + torch.pow(1 - torch.exp(-1 * omiga_h), 4)
-        #     #return iou - 0.5 * (distance_cost + shape_cost)
-        #
-        #     # ##todo my
-        #     rho2 = ((b2_x1 + b2_x2 - b1_x1 - b1_x2) ** 2 +
-        #             (b2_y1 + b2_y2 - b1_y1 - b1_y2) ** 2) / 4  # center distance squared
-        #     c2 = (cw + ch) ** 2 + eps  # convex diagonal squared
-        #     rho_w2 = ((b2_x2 - b2_x1) - (b1_x2 - b1_x1)) ** 2
-        #     rho_h2 = ((b2_y2 - b2_y1) - (b1_y2 - b1_y1)) ** 2
-        #     cw2 = cw ** 2 + eps
-        #     ch2 = ch ** 2 + eps
-        #     distance_cost = direct_cost * rho2 / c2
-        #     return iou - distance_cost - (rho_w2 / cw2 + rho_h2 / ch2)# distance_cost
-        elif CIoU or DIoU or SEIoU:  # Distance or Complete IoU https://arxiv.org/abs/1911.08287v1
+        elif SEIoU:  # SIoU Loss
+            #-----角度损失-------
+            s_cw = (b2_x1 + b2_x2 - b1_x1 - b1_x2) * 0.5
+            s_ch = (b2_y1 + b2_y2 - b1_y1 - b1_y2) * 0.5
+            sigma = torch.pow(s_cw ** 2 + s_ch ** 2, 0.5)
+            sin_alpha_1 = torch.abs(s_cw) / sigma
+            sin_alpha_2 = torch.abs(s_ch) / sigma
+            threshold = pow(2, 0.5) / 2 #夹角阈值 0.7071068 = sin45
+            sin_alpha = torch.where(sin_alpha_1 > threshold, sin_alpha_2, sin_alpha_1)
+            direct_cost = torch.cos(torch.arcsin(sin_alpha) * 2 - math.pi / 2)
+            # #------距离损失-------
+            # rho_x = (s_cw / cw) ** 2
+            # rho_y = (s_ch / ch) ** 2
+            # # gamma = angle_cost
+            # gamma = direct_cost - 2
+            # distance_cost = 2 - torch.exp(gamma * rho_x) - torch.exp(gamma * rho_y)
+            # #-----形状损失--------
+            # omiga_w = torch.abs(w1 - w2) / torch.max(w1, w2)
+            # omiga_h = torch.abs(h1 - h2) / torch.max(h1, h2)
+            # shape_cost = torch.pow(1 - torch.exp(-1 * omiga_w), 4) + torch.pow(1 - torch.exp(-1 * omiga_h), 4)
+            #return iou - 0.5 * (distance_cost + shape_cost)
+
+            # ##todo my
+            rho2 = ((b2_x1 + b2_x2 - b1_x1 - b1_x2) ** 2 +
+                    (b2_y1 + b2_y2 - b1_y1 - b1_y2) ** 2) / 4  # center distance squared
+            c2 = (cw + ch) ** 2 + eps  # convex diagonal squared
+            rho_w2 = ((b2_x2 - b2_x1) - (b1_x2 - b1_x1)) ** 2
+            rho_h2 = ((b2_y2 - b2_y1) - (b1_y2 - b1_y1)) ** 2
+            cw2 = cw ** 2 + eps
+            ch2 = ch ** 2 + eps
+            distance_cost = direct_cost * rho2 / c2  #direct_cost *
+            return iou - distance_cost - (rho_w2 / cw2 + rho_h2 / ch2)# distance_cost
+        elif CIoU or DIoU :  # Distance or Complete IoU https://arxiv.org/abs/1911.08287v1
             c2 = cw ** 2 + ch ** 2 + eps  # convex diagonal squared
             rho2 = ((b2_x1 + b2_x2 - b1_x1 - b1_x2) ** 2 +
                     (b2_y1 + b2_y2 - b1_y1 - b1_y2) ** 2) / 4  # center distance squared
             if DIoU:
                 return iou - rho2 / c2  # DIoU
-            elif CIoU:  # https://github.com/Zzh-tju/DIoU-SSD-pytorch/blob/master/utils/box/box_utils.py#L47
+            elif CIoU :  # https://github.com/Zzh-tju/DIoU-SSD-pytorch/blob/master/utils/box/box_utils.py#L47
                 v = (4 / math.pi ** 2) * torch.pow(torch.atan(w2 / (h2 + eps)) - torch.atan(w1 / (h1 + eps)), 2)
                 with torch.no_grad():
                     alpha = v / (v - iou + (1 + eps))
                 return iou - (rho2 / c2 + v * alpha)  # CIoU
-            elif SEIoU:
+            elif EIoU :
                 rho_w2 = ((b2_x2 - b2_x1) - (b1_x2 - b1_x1)) ** 2
                 rho_h2 = ((b2_y2 - b2_y1) - (b1_y2 - b1_y1)) ** 2
                 cw2 = cw ** 2 + eps

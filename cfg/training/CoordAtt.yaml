@@ -133,9 +133,9 @@ head:
    [[-1, -2, -3, -4, -5, -6], 1, Concat, [1]],
    [-1, 1, Conv, [512, 1, 1]], # 101
    
-   [75, 1, RepConv_OREPA, [256, 3, 1]],
-   [88, 1, RepConv_OREPA, [512, 3, 1]],
-   [101, 1, RepConv_OREPA, [1024, 3, 1]], #RepConv_OREPA
+   [75, 1, RepConv, [256, 3, 1]],
+   [88, 1, RepConv, [512, 3, 1]],
+   [101, 1, RepConv, [1024, 3, 1]], #RepConv_OREPA
 
    [[102,103,104], 1, IDetect, [nc, anchors]],   # Detect(P3, P4, P5)
   ]
