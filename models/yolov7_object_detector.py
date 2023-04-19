@@ -17,8 +17,8 @@ class YOLOV7TorchObjectDetector(nn.Module):
                  img_size,
                  names=None,
                  mode='eval',
-                 confidence=0.45,
-                 iou_thresh=0.45,
+                 confidence=0.35,
+                 iou_thresh=0.65,
                  agnostic_nms=False):
         super(YOLOV7TorchObjectDetector, self).__init__()
         self.device = device
@@ -47,7 +47,7 @@ class YOLOV7TorchObjectDetector(nn.Module):
         self.model(img)
 
     @staticmethod
-    def non_max_suppression(prediction, logits, conf_thres=0.3, iou_thres=0.45, classes=None, agnostic=False,
+    def non_max_suppression(prediction, logits, conf_thres=0.2, iou_thres=0.45, classes=None, agnostic=False,
                             multi_label=False, labels=(), max_det=300):
         """Runs Non-Maximum Suppression (NMS) on inference and logits results
 

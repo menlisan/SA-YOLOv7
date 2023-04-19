@@ -527,18 +527,18 @@ def train(hyp, opt, device, tb_writer=None):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights', type=str, default='yolov7_training.pt', help='initial weights path') # yolov7_training.pt  runs/train/pcb_cbma_eiou/weights/last.pt
-    parser.add_argument('--cfg', type=str, default='cfg/training/CoordAtt.yaml', help='model.yaml path')
-    parser.add_argument('--data', type=str, default='data/fics_pcb.yaml', help='data.yaml path')#voc.yaml
+    parser.add_argument('--weights', type=str, default='yolov7_training.pt', help='initial weights path') # yolov7_training.pt  runs/train_linux/exp914/weights/best.pt
+    parser.add_argument('--cfg', type=str, default='cfg/training/yolov7.yaml', help='model.yaml path')
+    parser.add_argument('--data', type=str, default='data/hit_uav.yaml', help='data.yaml path')#voc.yaml
     parser.add_argument('--hyp', type=str, default='data/hyp.scratch.p5.yaml', help='hyperparameters path')
     parser.add_argument('--epochs', type=int, default=100)
     parser.add_argument('--batch-size', type=int, default=8, help='total batch size for all GPUs')
-    parser.add_argument('--img-size', nargs='+', type=int, default=[224, 224], help='[train, test] image sizes')
+    parser.add_argument('--img-size', nargs='+', type=int, default=[512, 512], help='[train, test] image sizes')
     parser.add_argument('--rect', action='store_true', help='rectangular training')
     parser.add_argument('--resume', nargs='?', const=True, default=False, help='resume most recent training')
     parser.add_argument('--nosave', action='store_true', help='only save final checkpoint')
     parser.add_argument('--notest', action='store_true', help='only test final epoch')
-    parser.add_argument('--noautoanchor', action='store_true', help='disable autoanchor check')
+    parser.add_argument('--noautoanchor', action='store_true', help='  `disable autoanchor check')
     parser.add_argument('--evolve', action='store_true', help='evolve hyperparameters')
     parser.add_argument('--bucket', type=str, default='', help='gsutil bucket')
     parser.add_argument('--cache-images', action='store_true', help='cache images for faster training')
@@ -550,7 +550,7 @@ if __name__ == '__main__':
     parser.add_argument('--sync-bn', action='store_true', help='use SyncBatchNorm, only available in DDP mode')
     parser.add_argument('--local_rank', type=int, default=-1, help='DDP parameter, do not modify')
     parser.add_argument('--workers', type=int, default=1, help='maximum number of dataloader workers')
-    parser.add_argument('--project', default='runs/train', help='save to project/name')
+    parser.add_argument('--project', default='runs/hit_train', help='save to project/name')
     parser.add_argument('--entity', default=None, help='W&B entity')
     parser.add_argument('--name', default='exp', help='save to project/name')
     parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
@@ -670,7 +670,7 @@ if __name__ == '__main__':
                 x = x[np.argsort(-fitness(x))][:n]  # top n mutations
                 w = fitness(x) - fitness(x).min()  # weights
                 if parent == 'single' or len(x) == 1:
-                    # x = x[random.randint(0, n - 1)]  # random selection
+                    #x = x[random.randint(0, n - 1)]  # random selection
                     x = x[random.choices(range(n), weights=w)[0]]  # weighted selection
                 elif parent == 'weighted':
                     x = (x * w.reshape(n, 1)).sum(0) / w.sum()  # weighted combination

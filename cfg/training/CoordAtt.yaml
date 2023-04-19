@@ -9,7 +9,7 @@ anchors:
   - [36,75, 76,55, 72,146]  # P4/16
   - [142,110, 192,243, 459,401]  # P5/32
 
-# yolov7 backbone
+#  backbone
 backbone:
   # [from, number, module, args]
   [[-1, 1, Conv, [32, 3, 1]],  # 0
@@ -71,15 +71,15 @@ backbone:
 
   ]
 
-# yolov7 head
+# head
 head:
-  [[-1, 1, SPPCSPC, [512]], # 51
+  [[-1, 1, SPPCSPC, [512]], # 51  #SPPCSPC BasicRFB
   
    [-1, 1, Conv, [256, 1, 1]],
-   [-1, 1, nn.Upsample, [None, 2, 'nearest']],
+   [-1, 1, nn.Upsample, [None, 2, 'bilinear']],
    [37, 1, Conv, [256, 1, 1]], # route backbone P4
    [[-1, -2], 1, Concat, [1]],
-   
+
    [-1, 1, Conv, [256, 1, 1]],
    [-2, 1, Conv, [256, 1, 1]],
    [-1, 1, Conv, [128, 3, 1]],
@@ -90,10 +90,10 @@ head:
    [-1, 1, Conv, [256, 1, 1]], # 63
    
    [-1, 1, Conv, [128, 1, 1]],
-   [-1, 1, nn.Upsample, [None, 2, 'nearest']],
+   [-1, 1, nn.Upsample, [None, 2, 'bilinear']],# nearest bilinear
    [24, 1, Conv, [128, 1, 1]], # route backbone P3
    [[-1, -2], 1, Concat, [1]],
-   
+
    [-1, 1, Conv, [128, 1, 1]],
    [-2, 1, Conv, [128, 1, 1]],
    [-1, 1, Conv, [64, 3, 1]],
@@ -133,9 +133,9 @@ head:
    [[-1, -2, -3, -4, -5, -6], 1, Concat, [1]],
    [-1, 1, Conv, [512, 1, 1]], # 101
    
-   [75, 1, RepConv, [256, 3, 1]],
-   [88, 1, RepConv, [512, 3, 1]],
-   [101, 1, RepConv, [1024, 3, 1]], #RepConv_OREPA
+   [75, 1, RepConv_OREPA, [256, 3, 1]],
+   [88, 1, RepConv_OREPA, [512, 3, 1]],
+   [101, 1, RepConv_OREPA, [1024, 3, 1]],
 
    [[102,103,104], 1, IDetect, [nc, anchors]],   # Detect(P3, P4, P5)
   ]
